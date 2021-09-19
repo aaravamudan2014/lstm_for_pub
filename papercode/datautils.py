@@ -35,13 +35,13 @@ INVALID_ATTR = [
 #    'output_std': np.array([3.62443672])
 #}
 
-# NLDAS mean/std calculated over all basins in period 01.10.1999 until 30.09.2008
-SCALER = {
-    'input_means': np.array([3.015, 357.68, 10.864, 10.864, 1055.533]),
-    'input_stds': np.array([7.573, 129.878, 10.932, 10.932, 705.998]),
-    'output_mean': np.array([1.49996196]),
-    'output_std': np.array([3.62443672])
-}
+# # NLDAS mean/std calculated over all basins in period 01.10.1999 until 30.09.2008
+# SCALER = {
+#     'input_means': np.array([3.015, 357.68, 10.864, 10.864, 1055.533]),
+#     'input_stds': np.array([7.573, 129.878, 10.932, 10.932, 705.998]),
+#     'output_mean': np.array([1.49996196]),
+#     'output_std': np.array([3.62443672])
+# }
 
 
 def add_camels_attributes(camels_root: PosixPath, db_path: str = None):
@@ -260,8 +260,8 @@ def load_forcing(camels_root: PosixPath, basin: str) -> Tuple[pd.DataFrame, int]
         If not forcing file was found.
     """
     #    forcing_path = camels_root / 'basin_mean_forcing' / 'maurer_extended'
-    #    forcing_path = camels_root / 'basin_mean_forcing' / 'nldas'
-    forcing_path = camels_root / 'basin_mean_forcing' / 'nldas_extended'
+    forcing_path = camels_root / 'basin_mean_forcing' / 'daymet'
+    # forcing_path = camels_root / 'basin_mean_forcing' / 'nldas_extended'
     files = list(forcing_path.glob('**/*_forcing_leap.txt'))
     file_path = [f for f in files if f.name[:8] == basin]
     if len(file_path) == 0:
