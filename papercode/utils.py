@@ -24,6 +24,7 @@ def create_h5_files(camels_root: PosixPath,
                     out_file: PosixPath,
                     basins: List,
                     dates: List,
+                    dataset_mode: str,
                     with_basin_str: bool = True,
                     seq_length: int = 270):
     """[summary]
@@ -50,7 +51,26 @@ def create_h5_files(camels_root: PosixPath,
     """
     if out_file.is_file():
         raise FileExistsError(f"File already exists at {out_file}")
+    
+    ########################### Addition by Akshay #############################
+    def get_dates(mode):
+      exp_1_df = pd.read_csv('datetime_info.csv')
+      exp_1_starts = []
+      exp_1_ends = []
+      
 
+      for start_date in exp_1_df[mode+"_start"].values:
+        exp_1_starts.append(pd.to_datetime(str(start_date), format='%d%m%Y'))
+
+      for end_date in exp_1_df[mode+"_end"].values:
+        exp_1_ends.append(pd.to_datetime(str(end_date), format='%d%m%Y'))
+      
+      return exp_1_starts, exp_1_ends
+
+    start_dates , end_dates = get_dates(dataset_mode)
+    new_dates = np.array([start_dates,end_dates])
+    ############################################################################
+    
     with h5py.File(out_file, 'w') as out_f:
         input_data = out_f.create_dataset(
             'input_data',
@@ -91,7 +111,7 @@ def create_h5_files(camels_root: PosixPath,
                 basin=basin,
                 is_train=True,
                 seq_length=seq_length,
-                dates=dates)
+                dates=new_dates)
 
             num_samples = len(dataset)
             total_samples = input_data.shape[0] + num_samples
