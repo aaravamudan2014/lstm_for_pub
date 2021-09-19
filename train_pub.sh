@@ -1,6 +1,6 @@
 #!/bin/bash
 
-nsplits=12
+nsplits=4
 nseeds=10
 firstseed=300
 
@@ -20,7 +20,7 @@ for (( seed = $firstseed ; seed < $((nseeds+$firstseed)) ; seed++ )); do
     then
 
       outfile="reports/pub_lstm_extended_nldas.$seed.$split.out"
-      python3 main.py --gpu=$gpu --no_static=False --concat_static=True --split=$split --split_file="data/kfold_splits_seed$seed.p" train > $outfile &
+      python3 main.py --gpu=$gpu --no_static=False --mode='create_splits' --concat_static=True --split=$split --split_file="data/kfold_splits_seed$seed.p" train > $outfile &
 
     else
       echo bad model choice
