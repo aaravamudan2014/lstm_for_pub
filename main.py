@@ -338,7 +338,6 @@ def train(cfg):
         basins = splits[cfg["split"]]["train"]
     else:
         basins = get_basin_list()
-
     # create folder structure for this run
     cfg = _setup_run(cfg)
 
@@ -608,45 +607,58 @@ def create_splits(cfg: dict):
         If the user defined basin list path does not exist.
     """
     output_file = (Path(__file__).absolute().parent / f'data/kfold_splits_seed{cfg["seed"]}.p')
-    # check if split file already already exists
-    if output_file.is_file():
-        raise RuntimeError(f"File '{output_file}' already exists.")
+    # # check if split file already already exists
+    # if output_file.is_file():
+    #     raise RuntimeError(f"File '{output_file}' already exists.")
 
-    # set random seed for reproduceability
-    np.random.seed(cfg["seed"])
+    # # set random seed for reproduceability
+    # np.random.seed(cfg["seed"])
 
-    # read in basin file
-    if cfg["basin_file"] is not None:
-        if not Path(cfg["basin_file"]).is_file():
-            raise FileNotFoundError(f"Not file found at {cfg['basin_file']}")
-        with open(cfg["basin_file"], 'r') as fp:
-            basins = fp.readlines()
-        basins = [b.strip() for b in basins]
-        """
-        Delete some basins because of missing data:
-        - '06775500' & '06846500' no attributes
-        - '09535100' no streamflow records
-        """
-        ignore_basins = ['06775500', '06846500', '09535100']
-        basins = [b for b in basins if b not in ignore_basins]
-    else:
-        basins = get_basin_list()
+    # # read in basin file
+    # if cfg["basin_file"] is not None:
+    #     if not Path(cfg["basin_file"]).is_file():
+    #         raise FileNotFoundError(f"Not file found at {cfg['basin_file']}")
+    #     with open(cfg["basin_file"], 'r') as fp:
+    #         basins = fp.readlines()
+    #     basins = [b.strip() for b in basins]
+    #     """
+    #     Delete some basins because of missing data:
+    #     - '06775500' & '06846500' no attributes
+    #     - '09535100' no streamflow records
+    #     """
+    #     ignore_basins = ['06775500', '06846500', '09535100']
+    #     basins = [b for b in basins if b not in ignore_basins]
+    # else:
+    #     basins = get_basin_list()
 
-    # create folds
-    kfold = KFold(n_splits=cfg["n_splits"], shuffle=True, random_state=cfg["seed"])
-    kfold.get_n_splits(basins)
+    # # create folds
+    # kfold = KFold(n_splits=cfg["n_splits"], shuffle=True, random_state=cfg["seed"])
+    # kfold.get_n_splits(basins)
 
-    # dict to store the results of all folds
+    # # dict to store the results of all folds
     splits = defaultdict(dict)
 
-    for split, (train_idx, test_idx) in enumerate(kfold.split(basins)):
-        # further split train_idx into train/val idx into train and val set
+    # for split, (train_idx, test_idx) in enumerate(kfold.split(basins)):
+    #     # further split train_idx into train/val idx into train and val set
 
-        train_basins = [basins[i] for i in train_idx]
-        test_basins = [basins[i] for i in test_idx]
+    #     train_basins = [basins[i] for i in train_idx]
+    #     test_basins = [basins[i] for i in test_idx]
 
-        splits[split] = {'train': train_basins, 'test': test_basins}
+    import pandas as pd
+    import math
 
+    exp_1_df = pd.read_csv('datetime_info.csv')
+    exp_1_catchments = []
+
+    for catchment_id in exp_1_df['CatchmentID'].unique():
+      if int(math.log10(catchment_id))+1 == 7:
+        exp_1_catchments.append('0'+str(catchment_id))
+      else:
+        exp_1_catchments.append(str(catchment_id))
+    train_basins = exp_1_catchments
+    test_basins = exp_1_catchments
+    splits[0] = {'train': train_basins, 'test': test_basins}
+    
     with output_file.open('wb') as fp:
         pickle.dump(splits, fp)
 
