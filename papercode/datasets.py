@@ -116,16 +116,16 @@ class CamelsTXT(Dataset):
 
         # use all meteorological variables as inputs
         x = np.array([
-            df['PRCP(mm/day)'].values, df['SRAD(W/m2)'].values, df['Tmax(C)'].values,
-            df['Tmin(C)'].values, df['Vp(Pa)'].values
-            #            df['prcp(mm/day)'].values, df['srad(W/m2)'].values, df['tmax(C)'].values,
-            #            df['tmin(C)'].values, df['vp(Pa)'].values
+            # df['PRCP(mm/day)'].values, df['SRAD(W/m2)'].values, df['Tmax(C)'].values,
+            # df['Tmin(C)'].values, df['Vp(Pa)'].values
+            df['prcp(mm/day)'].values, df['srad(W/m2)'].values, df['tmax(C)'].values,
+            df['tmin(C)'].values, df['vp(Pa)'].values
         ]).T
 
         y = np.array([df['QObs(mm/d)'].values]).T
 
         # normalize data, reshape for LSTM training and remove invalid samples
-        x = normalize_features(x, variable='inputs')
+        # x = normalize_features(x, variable='inputs')
 
         x, y = reshape_data(x, y, self.seq_length)
 
@@ -145,7 +145,7 @@ class CamelsTXT(Dataset):
             # store std of discharge before normalization
             self.q_std = np.std(y)
 
-            y = normalize_features(y, variable='output')
+            # y = normalize_features(y, variable='output')
 
         # convert arrays to torch tensors
         x = torch.from_numpy(x.astype(np.float32))
