@@ -48,7 +48,7 @@ GLOBAL_SETTINGS = {
     'initial_forget_gate_bias': 5,
     'log_interval': 50,
     'learning_rate': 1e-3,
-    'seq_length': 270,
+    'seq_length': 365,
     'train_start': pd.to_datetime('01101980', format='%d%m%Y'),
     'train_end': pd.to_datetime('30091995', format='%d%m%Y'),
     'val_start': pd.to_datetime('01101995', format='%d%m%Y'),
