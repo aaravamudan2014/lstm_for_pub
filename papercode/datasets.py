@@ -108,6 +108,7 @@ class CamelsTXT(Dataset):
         # we use (seq_len) time steps before start for warmup
         start_date = self.dates[0] - pd.DateOffset(days=self.seq_length - 1)
         end_date = self.dates[1]
+
         df = df[start_date:end_date]
 
         # store first and last date of the selected period (including warm_start)
@@ -125,8 +126,7 @@ class CamelsTXT(Dataset):
         y = np.array([df['QObs(mm/d)'].values]).T
 
         # normalize data, reshape for LSTM training and remove invalid samples
-        # x = normalize_features(x, variable='inputs')
-
+        x = normalize_features(x, variable='inputs')
         x, y = reshape_data(x, y, self.seq_length)
 
         if self.is_train:
