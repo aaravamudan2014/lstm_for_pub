@@ -28,12 +28,12 @@ INVALID_ATTR = [
 ]
 
 ## Maurer mean/std calculated over all basins in period 01.10.1999 until 30.09.2008
-#SCALER = {
-#    'input_means': np.array([3.17563234, 372.01003929, 17.31934062, 3.97393362, 924.98004197]),
-#    'input_stds': np.array([6.94344737, 131.63560881, 10.86689718, 10.3940032, 629.44576432]),
-#    'output_mean': np.array([1.49996196]),
-#    'output_std': np.array([3.62443672])
-#}
+SCALER = {
+   'input_means': np.array([3.17563234, 372.01003929, 17.31934062, 3.97393362, 924.98004197]),
+   'input_stds': np.array([6.94344737, 131.63560881, 10.86689718, 10.3940032, 629.44576432]),
+   'output_mean': np.array([1.49996196]),
+   'output_std': np.array([3.62443672])
+}
 
 # # NLDAS mean/std calculated over all basins in period 01.10.1999 until 30.09.2008
 # SCALER = {
