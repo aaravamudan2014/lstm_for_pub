@@ -1,7 +1,7 @@
 #!/bin/bash
 
-nsplits=4
-nseeds=10
+nsplits=1
+nseeds=1
 firstseed=300
 
 gpucount=-1
@@ -18,9 +18,9 @@ for (( seed = $firstseed ; seed < $((nseeds+$firstseed)) ; seed++ )); do
 
     if [ "$1" = "lstm" ]
     then
-
       outfile="reports/pub_lstm_extended_nldas.$seed.$split.out"
-      python3 main.py --gpu=$gpu --no_static=False --mode='create_splits' --concat_static=True --split=$split --split_file="data/kfold_splits_seed$seed.p" train > $outfile &
+      python3 main.py --gpu=$gpu --no_static=False --concat_static=True --split=$split --split_file="data/kfold_splits_seed$seed.p" train 
+      # > $outfile &
 
     else
       echo bad model choice
