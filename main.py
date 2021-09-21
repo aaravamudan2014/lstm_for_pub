@@ -87,7 +87,7 @@ def get_args() -> Dict:
         default='./data/basin_dataset_public_v1p2/',
         help="Root directory of CAMELS data set")
     parser.add_argument('--seed', type=int, required=False, help="Random seed")
-    parser.add_argument('--experiment', type=str, required=True, help="Random seed")
+    parser.add_argument('--experiment', type=str, required=True, help="Experiment ID (E1/E2) ")
     parser.add_argument('--run_dir', type=str, help="For evaluation mode. Path to run directory.")
     parser.add_argument(
         '--gpu',
@@ -468,6 +468,7 @@ def evaluate(user_cfg: Dict):
         basins = splits[run_cfg["split"]]["test"]
     else:
         basins = get_basin_list()
+        raise Exception("Using default basin list")
 
     # get attribute means/stds from trainings dataset
     train_file = user_cfg["run_dir"] / "data/train/train_data.h5"
@@ -487,16 +488,41 @@ def evaluate(user_cfg: Dict):
         no_static=run_cfg["no_static"]).to(DEVICE)
 
     # load trained model
-    weight_file = user_cfg["run_dir"] / 'model_epoch30.pt'
+    weight_file = user_cfg["run_dir"] / 'model_epoch25.pt'
     model.load_state_dict(torch.load(weight_file, map_location=DEVICE))
 
-    date_range = pd.date_range(start=GLOBAL_SETTINGS["val_start"], end=GLOBAL_SETTINGS["val_end"])
     results = {}
-    for basin in tqdm(basins):
+
+    ########################### Addition by Akshay #############################
+    def get_dates(mode):
+
+      df = pd.read_csv(user_cfg['experiment']+'/catchments_'+mode+'.txt', converters={mode+"_start": lambda x: str(x),mode+"_end": lambda x: str(x) })
+      
+      start_dates = []
+      end_dates = []
+      
+      # df[mode+"_start"] = exp_1_df[mode+"_start"].astype(str)
+      # df[mode+"_end"] = exp_1_df[mode+"_end"].astype(str)
+      
+      for start_date in df[mode+"_start"].values:
+        start_dates.append(pd.to_datetime(str(start_date), format='%d%m%Y'))
+
+      for end_date in df[mode+"_end"].values:
+        end_dates.append(pd.to_datetime(str(end_date), format='%d%m%Y'))
+      
+      return start_dates, end_dates
+
+    start_dates , end_dates = get_dates("Test")
+    new_dates = np.array([start_dates,end_dates])
+    ############################################################################  
+    # print(len(basins))
+    # print(len(start_dates))
+    # input()
+    for index, basin in enumerate(tqdm(basins)):
         ds_test = CamelsTXT(
             camels_root=user_cfg["camels_root"],
             basin=basin,
-            dates=[GLOBAL_SETTINGS["val_start"], GLOBAL_SETTINGS["val_end"]],
+            dates=[new_dates[0, index], new_dates[1, index]],
             is_train=False,
             seq_length=run_cfg["seq_length"],
             with_attributes=True,
@@ -507,7 +533,8 @@ def evaluate(user_cfg: Dict):
         loader = DataLoader(ds_test, batch_size=1024, shuffle=False, num_workers=4)
 
         preds, obs = evaluate_basin(model, loader)
-
+        date_range = pd.date_range(start=new_dates[0, index], end=new_dates[1, index])
+    
         df = pd.DataFrame(data={'qobs': obs.flatten(), 'qsim': preds.flatten()}, index=date_range)
 
         results[basin] = df
