@@ -36,7 +36,7 @@ class CamelsTXT(Dataset):
     is_train : bool
         If True, discharge observations are normalized and invalid discharge samples are removed
     seq_length : int, optional
-        Length of the input sequence, by default 270
+        Length of the input sequence, by default 365
     with_attributes : bool, optional
         If True, loads and returns addtionaly attributes, by default False
     attribute_means : pd.Series, optional
@@ -55,7 +55,7 @@ class CamelsTXT(Dataset):
                  basin: str,
                  dates: List,
                  is_train: bool,
-                 seq_length: int = 270,
+                 seq_length: int = 365,
                  with_attributes: bool = False,
                  attribute_means: pd.Series = None,
                  attribute_stds: pd.Series = None,
