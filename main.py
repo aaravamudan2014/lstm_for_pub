@@ -237,7 +237,8 @@ def _prepare_data(cfg: Dict, basins: List) -> Dict:
         basins=basins,
         dates=[cfg["train_start"], cfg["train_end"]],
         with_basin_str=True,
-        seq_length=cfg["seq_length"])
+        seq_length=cfg["seq_length"],
+        dataset_mode="train")
 
     return cfg
 
