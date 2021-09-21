@@ -87,7 +87,7 @@ def get_args() -> Dict:
         default='./data/basin_dataset_public_v1p2/',
         help="Root directory of CAMELS data set")
     parser.add_argument('--seed', type=int, required=False, help="Random seed")
-    parser.add_argument('--experiment', type=int, required=True, help="Random seed")
+    parser.add_argument('--experiment', type=str, required=True, help="Random seed")
     parser.add_argument('--run_dir', type=str, help="For evaluation mode. Path to run directory.")
     parser.add_argument(
         '--gpu',
@@ -239,7 +239,8 @@ def _prepare_data(cfg: Dict, basins: List) -> Dict:
         dates=[cfg["train_start"], cfg["train_end"]],
         with_basin_str=True,
         seq_length=cfg["seq_length"],
-        dataset_mode="train")
+        dataset_mode="Train",
+        experiment=cfg["experiment"])
 
     return cfg
 
@@ -649,16 +650,30 @@ def create_splits(cfg: dict):
     import pandas as pd
     import math
 
-    exp_1_df = pd.read_csv('datetime_info.csv')
-    exp_1_catchments = []
+    if cfg['experiment'] == 'E1':
+      training_catchment_filename = "E1/catchments_train.csv"
+      validation_catchment_filename = "E1/catchments_validate.csv"
+      test_catchment_filename = "E1/catchments_test.csv"  
+    elif cfg['experiment'] == 'E2':
+      training_catchment_filename = "E2/catchments_train.csv"
+      validation_catchment_filename = "E2/catchments_validate.csv"
+      test_catchment_filename = "E2/catchments_test.csv"
+    else:
+      raise Exception("Invalid option for experiment")
+    
+    def get_catchments(filename):
+      catchments = []
+      for catchment_id in pd.read_csv(filename)['CatchmentID'].values:
+        if int(math.log10(catchment_id))+1 == 7:
+          catchments.append('0'+str(catchment_id))
+        else:
+          catchments.append(str(catchment_id))
+      return catchments
 
-    for catchment_id in exp_1_df['CatchmentID'].unique():
-      if int(math.log10(catchment_id))+1 == 7:
-        exp_1_catchments.append('0'+str(catchment_id))
-      else:
-        exp_1_catchments.append(str(catchment_id))
-    train_basins = exp_1_catchments
-    test_basins = exp_1_catchments
+
+    train_basins = get_catchments(training_catchment_filename)
+    test_basins = get_catchments(validation_catchment_filename)
+
     splits[0] = {'train': train_basins, 'test': test_basins}
     
     with output_file.open('wb') as fp:
