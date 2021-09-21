@@ -24,9 +24,10 @@ def create_h5_files(camels_root: PosixPath,
                     out_file: PosixPath,
                     basins: List,
                     dates: List,
+                    experiment: str,
                     dataset_mode: str,
                     with_basin_str: bool = True,
-                    seq_length: int = 270):
+                    seq_length: int = 365):
     """[summary]
     
     Parameters
@@ -54,20 +55,22 @@ def create_h5_files(camels_root: PosixPath,
     
     ########################### Addition by Akshay #############################
     def get_dates(mode):
-      exp_1_df = pd.read_csv('datetime_info.txt', converters={mode+"_start": lambda x: str(x),mode+"_end": lambda x: str(x) })
-      exp_1_starts = []
-      exp_1_ends = []
-      
-      exp_1_df[mode+"_start"] = exp_1_df[mode+"_start"].astype(str)
-      exp_1_df[mode+"_end"] = exp_1_df[mode+"_end"].astype(str)
-      
-      for start_date in exp_1_df[mode+"_start"].values:
-        exp_1_starts.append(pd.to_datetime(str(start_date), format='%d%m%Y'))
 
-      for end_date in exp_1_df[mode+"_end"].values:
-        exp_1_ends.append(pd.to_datetime(str(end_date), format='%d%m%Y'))
+      df = pd.read_csv(experiment+'/catchments_'+mode+'.txt', converters={mode+"_start": lambda x: str(x),mode+"_end": lambda x: str(x) })
       
-      return exp_1_starts, exp_1_ends
+      start_dates = []
+      end_dates = []
+      
+      # df[mode+"_start"] = exp_1_df[mode+"_start"].astype(str)
+      # df[mode+"_end"] = exp_1_df[mode+"_end"].astype(str)
+      
+      for start_date in df[mode+"_start"].values:
+        start_dates.append(pd.to_datetime(str(start_date), format='%d%m%Y'))
+
+      for end_date in df[mode+"_end"].values:
+        end_dates.append(pd.to_datetime(str(end_date), format='%d%m%Y'))
+      
+      return start_dates, end_dates
 
     start_dates , end_dates = get_dates(dataset_mode)
     new_dates = np.array([start_dates,end_dates])
