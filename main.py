@@ -87,6 +87,7 @@ def get_args() -> Dict:
         default='./data/basin_dataset_public_v1p2/',
         help="Root directory of CAMELS data set")
     parser.add_argument('--seed', type=int, required=False, help="Random seed")
+    parser.add_argument('--experiment', type=int, required=True, help="Random seed")
     parser.add_argument('--run_dir', type=str, help="For evaluation mode. Path to run directory.")
     parser.add_argument(
         '--gpu',
