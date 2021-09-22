@@ -7,7 +7,7 @@ firstseed=300
 gpucount=-1
 huc="01"
 exp="E1"
-run_dir=""
+run_dir="run_${exp}_${huc}"
 
 
 for (( seed = $firstseed ; seed < $((nseeds+$firstseed)) ; seed++ )); do
@@ -42,5 +42,5 @@ for (( seed = $firstseed ; seed < $((nseeds+$firstseed)) ; seed++ )); do
 done
 
 
-# python3 main.py --n_splits=$nsplits --seed=$seed --huc=$huc --experiment=$exp --run_dir=$run_dir evaluate
-# wait
+python3 main.py --n_splits=$nsplits --seed=$seed --huc=$huc --experiment=$exp --run_dir=$run_dir evaluate
+wait
