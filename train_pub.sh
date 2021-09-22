@@ -42,5 +42,5 @@ for (( seed = $firstseed ; seed < $((nseeds+$firstseed)) ; seed++ )); do
 done
 
 
-python3 main.py --n_splits=$nsplits --seed=$seed --huc=$huc --experiment=$exp --run_dir=$run_dir evaluate
+python3 main.py --n_splits=$nsplits --seed=$firstseed --huc=$huc --experiment=$exp --run_dir="runs/${run_dir}" --split_file="data/kfold_splits_seed$firstseed.p" evaluate
 wait
