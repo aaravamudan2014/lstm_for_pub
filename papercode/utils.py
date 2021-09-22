@@ -114,7 +114,8 @@ def create_h5_files(camels_root: PosixPath,
                 basin=basin,
                 is_train=True,
                 seq_length=seq_length,
-                dates=[new_dates[0, index], new_dates[1, index]])
+                dates=[new_dates[0, index], new_dates[1, index]],
+                experiment=experiment)
 
             num_samples = len(dataset)
             total_samples = input_data.shape[0] + num_samples
