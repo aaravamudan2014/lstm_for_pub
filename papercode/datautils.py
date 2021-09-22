@@ -35,7 +35,7 @@ INVALID_ATTR = [
 #    'output_std': np.array([3.62443672])
 # }
 
-keys = ['input_means', 'input_stds', 'output_mean', 'output_stds']
+keys = ['input_means', 'input_stds', 'output_mean', 'output_std']
 
 ## Daymet mean/std calculated over all basins in trainin dataset (exp 1)
 exp1_scaler_means = pd.read_csv('E1/mean_Train.txt').values
@@ -194,7 +194,7 @@ def normalize_features(feature: np.ndarray,  experiment: str, variable: str) -> 
     return feature
 
 
-def rescale_features(feature: np.ndarray, variable: str) -> np.ndarray:
+def rescale_features(feature: np.ndarray, experiment:str, variable: str) -> np.ndarray:
     """Rescale features using global pre-computed statistics.
 
     Parameters
@@ -216,6 +216,12 @@ def rescale_features(feature: np.ndarray, variable: str) -> np.ndarray:
     RuntimeError
         If `variable` is neither 'inputs' nor 'output'
     """
+    if experiment == "E1":
+      SCALER = SCALER_1
+    elif experiment == "E2":
+      SCALER = SCALER_2
+    else:
+      raise Exception("Invalid experiment choice")
     if variable == 'inputs':
         feature = feature * SCALER["input_stds"] + SCALER["input_means"]
     elif variable == 'output':
