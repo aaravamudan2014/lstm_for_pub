@@ -27,13 +27,30 @@ INVALID_ATTR = [
     'water_frac', 'other_frac'
 ]
 
-## Maurer mean/std calculated over all basins in period 01.10.1999 until 30.09.2008
-SCALER = {
-   'input_means': np.array([3.17563234, 372.01003929, 17.31934062, 3.97393362, 924.98004197]),
-   'input_stds': np.array([6.94344737, 131.63560881, 10.86689718, 10.3940032, 629.44576432]),
-   'output_mean': np.array([1.49996196]),
-   'output_std': np.array([3.62443672])
-}
+# ## Maurer mean/std calculated over all basins in period 01.10.1999 until 30.09.2008
+# SCALER = {
+#    'input_means': np.array([3.17563234, 372.01003929, 17.31934062, 3.97393362, 924.98004197]),
+#    'input_stds': np.array([6.94344737, 131.63560881, 10.86689718, 10.3940032, 629.44576432]),
+#    'output_mean': np.array([1.49996196]),
+#    'output_std': np.array([3.62443672])
+# }
+
+keys = ['input_means', 'input_stds', 'output_mean', 'output_stds']
+
+## Daymet mean/std calculated over all basins in trainin dataset (exp 1)
+exp1_scaler_means = pd.read_csv('E1/mean_Train.txt').values
+exp1_scaler_stds = pd.read_csv('E1/std_Train.txt').values
+SCALER_1 = dict(zip(keys, [exp1_scaler_means[0][:-1], exp1_scaler_stds[0][:-1], exp1_scaler_means[0][-1], exp1_scaler_stds[0][-1]]))
+
+
+## Daymet mean/std calculated over all basins in trainin dataset (exp 2)
+exp2_scaler_means = pd.read_csv('E2/mean_Train.txt').values
+exp2_scaler_stds = pd.read_csv('E2/std_Train.txt').values
+SCALER_2 = dict(zip(keys, [exp2_scaler_means[0][:-1], exp2_scaler_stds[0][:-1], exp2_scaler_means[0][-1], exp2_scaler_stds[0][-1]]))
+
+
+
+
 
 # # NLDAS mean/std calculated over all basins in period 01.10.1999 until 30.09.2008
 # SCALER = {
@@ -138,7 +155,7 @@ def load_attributes(db_path: str,
     return df
 
 
-def normalize_features(feature: np.ndarray, variable: str) -> np.ndarray:
+def normalize_features(feature: np.ndarray,  experiment: str, variable: str) -> np.ndarray:
     """Normalize features using global pre-computed statistics.
 
     Parameters
@@ -160,7 +177,13 @@ def normalize_features(feature: np.ndarray, variable: str) -> np.ndarray:
     RuntimeError
         If `variable` is neither 'inputs' nor 'output'
     """
-
+    if experiment == "E1":
+      SCALER = SCALER_1
+    elif experiment == "E2":
+      SCALER = SCALER_2
+    else:
+      raise Exception("Invalid experiment choice")
+      
     if variable == 'inputs':
         feature = (feature - SCALER["input_means"]) / SCALER["input_stds"]
     elif variable == 'output':
