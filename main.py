@@ -600,12 +600,12 @@ def _store_results(user_cfg: Dict, run_cfg: Dict, results: pd.DataFrame):
 
     """
     if run_cfg["no_static"]:
-        file_name = user_cfg["run_dir"] / f"lstm_no_static_seed{run_cfg['seed']}.p"
+        file_name = user_cfg["run_dir"] / f"lstm_no_static_experiment{run_cfg['experiment']}.p"
     else:
         if run_cfg["concat_static"]:
-            file_name = user_cfg["run_dir"] / f"lstm_seed{run_cfg['seed']}.p"
+            file_name = user_cfg["run_dir"] / f"lstm_experiment{run_cfg['experiment']}.p"
         else:
-            file_name = user_cfg["run_dir"] / f"ealstm_seed{run_cfg['seed']}.p"
+            file_name = user_cfg["run_dir"] / f"ealstm_experiment{run_cfg['experiment']}.p"
 
     with (file_name).open('wb') as fp:
         pickle.dump(results, fp)
