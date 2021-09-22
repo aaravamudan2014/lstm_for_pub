@@ -5,8 +5,8 @@ nseeds=1
 firstseed=300
 
 gpucount=-1
-huc="01"
-exp="E1"
+huc="$2"
+exp="$3"
 run_dir="run_${exp}_${huc}"
 
 
