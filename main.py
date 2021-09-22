@@ -492,7 +492,7 @@ def evaluate(user_cfg: Dict):
         no_static=run_cfg["no_static"]).to(DEVICE)
 
     # load trained model
-    weight_file = user_cfg["run_dir"] / 'model_epoch25.pt'
+    weight_file = user_cfg["run_dir"] / 'model_epoch20.pt'
     model.load_state_dict(torch.load(weight_file, map_location=DEVICE))
 
     results = {}
@@ -529,10 +529,11 @@ def evaluate(user_cfg: Dict):
             attribute_means=means,
             attribute_stds=stds,
             concat_static=run_cfg["concat_static"],
-            db_path=db_path)
+            db_path=db_path,
+            experiment=user_cfg["experiment"])
         loader = DataLoader(ds_test, batch_size=1024, shuffle=False, num_workers=4)
 
-        preds, obs = evaluate_basin(model, loader)
+        preds, obs = evaluate_basin(model, user_cfg["experiment"], loader)
         date_range = pd.date_range(start=new_dates[0, index], end=new_dates[1, index])
     
         df = pd.DataFrame(data={'qobs': obs.flatten(), 'qsim': preds.flatten()}, index=date_range)
@@ -542,7 +543,7 @@ def evaluate(user_cfg: Dict):
     _store_results(user_cfg, run_cfg, results)
 
 
-def evaluate_basin(model: nn.Module, loader: DataLoader) -> Tuple[np.ndarray, np.ndarray]:
+def evaluate_basin(model: nn.Module,experiment: str, loader: DataLoader) -> Tuple[np.ndarray, np.ndarray]:
     """Evaluate model on a single basin
 
     Parameters
@@ -577,7 +578,7 @@ def evaluate_basin(model: nn.Module, loader: DataLoader) -> Tuple[np.ndarray, np
                 preds = torch.cat((preds, p.detach().cpu()), 0)
                 obs = torch.cat((obs, y.detach().cpu()), 0)
 
-        preds = rescale_features(preds.numpy(), variable='output')
+        preds = rescale_features(preds.numpy(),experiment,  variable='output')
         obs = obs.numpy()
         # set discharges < 0 to zero
         preds[preds < 0] = 0
