@@ -55,6 +55,7 @@ class CamelsTXT(Dataset):
                  basin: str,
                  dates: List,
                  is_train: bool,
+                 experiment: str, 
                  seq_length: int = 365,
                  with_attributes: bool = False,
                  attribute_means: pd.Series = None,
@@ -71,6 +72,7 @@ class CamelsTXT(Dataset):
         self.attribute_stds = attribute_stds
         self.concat_static = concat_static
         self.db_path = db_path
+        self.experiment = experiment
 
         # placeholder to store std of discharge, used for rescaling losses during training
         self.q_std = None
@@ -126,7 +128,7 @@ class CamelsTXT(Dataset):
         y = np.array([df['QObs(mm/d)'].values]).T
 
         # normalize data, reshape for LSTM training and remove invalid samples
-        x = normalize_features(x, variable='inputs')
+        x = normalize_features(x,  self.experiment,variable='inputs')
         x, y = reshape_data(x, y, self.seq_length)
 
         if self.is_train:
