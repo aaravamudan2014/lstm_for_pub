@@ -113,7 +113,7 @@ def get_args() -> Dict:
     parser.add_argument(
         '--use_mse',
         type=str2bool,
-        default=False,
+        default=True,
         help="If True, uses mean squared error as loss function.")
     parser.add_argument(
         '--n_splits',
