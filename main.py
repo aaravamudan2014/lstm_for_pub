@@ -684,7 +684,7 @@ def create_splits(cfg: dict):
       test_catchment_filename = "E1/catchments_Test.csv"  
     elif cfg['experiment'] == 'E2':
       training_catchment_filename = "E2/catchments_Train.csv"
-      validation_catchment_filename = "E2/catchments_talidate.csv"
+      validation_catchment_filename = "E2/catchments_Validate.csv"
       test_catchment_filename = "E2/catchments_Test.csv"
     else:
       raise Exception("Invalid option for experiment")
@@ -702,7 +702,7 @@ def create_splits(cfg: dict):
 
 
     train_basins = get_catchments(training_catchment_filename)
-    test_basins = get_catchments(validation_catchment_filename)
+    test_basins = get_catchments(test_catchment_filename)
 
     splits[0] = {'train': train_basins, 'test': test_basins}
     
