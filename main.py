@@ -88,6 +88,8 @@ def get_args() -> Dict:
         help="Root directory of CAMELS data set")
     parser.add_argument('--seed', type=int, required=False, help="Random seed")
     parser.add_argument('--experiment', type=str, required=True, help="Experiment ID (E1/E2) ")
+    parser.add_argument('--huc', type=str, required=True, help="Huc code for basin")
+    
     parser.add_argument('--run_dir', type=str, help="For evaluation mode. Path to run directory.")
     parser.add_argument(
         '--gpu',
@@ -495,15 +497,11 @@ def evaluate(user_cfg: Dict):
 
     ########################### Addition by Akshay #############################
     def get_dates(mode):
-
       df = pd.read_csv(user_cfg['experiment']+'/catchments_'+mode+'.txt', converters={mode+"_start": lambda x: str(x),mode+"_end": lambda x: str(x) })
-      
+      df = df[df['huc_02'] == int(user_cfg['huc'])]       
       start_dates = []
       end_dates = []
-      
-      # df[mode+"_start"] = exp_1_df[mode+"_start"].astype(str)
-      # df[mode+"_end"] = exp_1_df[mode+"_end"].astype(str)
-      
+
       for start_date in df[mode+"_start"].values:
         start_dates.append(pd.to_datetime(str(start_date), format='%d%m%Y'))
 
@@ -678,19 +676,21 @@ def create_splits(cfg: dict):
     import math
 
     if cfg['experiment'] == 'E1':
-      training_catchment_filename = "E1/catchments_train.csv"
-      validation_catchment_filename = "E1/catchments_validate.csv"
-      test_catchment_filename = "E1/catchments_test.csv"  
+      training_catchment_filename = "E1/catchments_Train.csv"
+      validation_catchment_filename = "E1/catchments_Validate.csv"
+      test_catchment_filename = "E1/catchments_Test.csv"  
     elif cfg['experiment'] == 'E2':
-      training_catchment_filename = "E2/catchments_train.csv"
-      validation_catchment_filename = "E2/catchments_validate.csv"
-      test_catchment_filename = "E2/catchments_test.csv"
+      training_catchment_filename = "E2/catchments_Train.csv"
+      validation_catchment_filename = "E2/catchments_talidate.csv"
+      test_catchment_filename = "E2/catchments_Test.csv"
     else:
       raise Exception("Invalid option for experiment")
     
     def get_catchments(filename):
       catchments = []
-      for catchment_id in pd.read_csv(filename)['CatchmentID'].values:
+      df = pd.read_csv(filename)
+      df = df[df['huc_02']==int(cfg['huc'])]
+      for catchment_id in df['CatchmentID'].values:
         if int(math.log10(catchment_id))+1 == 7:
           catchments.append('0'+str(catchment_id))
         else:
