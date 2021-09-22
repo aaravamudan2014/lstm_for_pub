@@ -43,7 +43,7 @@ GLOBAL_SETTINGS = {
     'clip_norm': True,
     'clip_value': 1,
     'dropout': 0.4,
-    'epochs': 30,
+    'epochs': 20,
     'hidden_size': 256,
     'initial_forget_gate_bias': 5,
     'log_interval': 50,
@@ -188,7 +188,9 @@ def _setup_run(cfg: Dict) -> Dict:
     month = f"{now.month}".zfill(2)
     hour = f"{now.hour}".zfill(2)
     minute = f"{now.minute}".zfill(2)
-    run_name = f'run_{day}{month}_{hour}{minute}_seed{cfg["seed"]}'
+    # run_name = f'run_{day}{month}_{hour}{minute}_seed{cfg["seed"]}'
+
+    run_name = f"run_{cfg['experiment']}_{cfg['huc']}"
     cfg['run_dir'] = Path(__file__).absolute().parent / "runs" / run_name
     if not cfg["run_dir"].is_dir():
         cfg["train_dir"] = cfg["run_dir"] / 'data' / 'train'
