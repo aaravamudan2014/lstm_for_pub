@@ -147,7 +147,7 @@ class CamelsTXT(Dataset):
             # store std of discharge before normalization
             self.q_std = np.std(y)
 
-            y = normalize_features(y, variable='output')
+            y = normalize_features(y,self.experiment, variable='output')
 
         # convert arrays to torch tensors
         x = torch.from_numpy(x.astype(np.float32))
