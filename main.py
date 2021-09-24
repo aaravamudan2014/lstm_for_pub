@@ -534,7 +534,7 @@ def evaluate(user_cfg: Dict):
         loader = DataLoader(ds_test, batch_size=1024, shuffle=False, num_workers=4)
 
         preds, obs = evaluate_basin(model, user_cfg["experiment"], loader)
-        date_range = pd.date_range(start=new_dates[0, index], end=new_dates[1, index])
+        date_range = pd.date_range(start=new_dates[0, index] +pd.DateOffset(days=run_cfg["seq_length"] - 1), end=new_dates[1, index])
     
         df = pd.DataFrame(data={'qobs': obs.flatten(), 'qsim': preds.flatten()}, index=date_range)
 
