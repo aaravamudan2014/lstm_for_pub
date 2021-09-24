@@ -108,7 +108,8 @@ class CamelsTXT(Dataset):
         df['QObs(mm/d)'] = load_discharge(self.camels_root, self.basin, area)
 
         # we use (seq_len) time steps before start for warmup
-        start_date = self.dates[0] - pd.DateOffset(days=self.seq_length - 1)
+        # start_date = self.dates[0] - pd.DateOffset(days=self.seq_length - 1)
+        start_date = self.dates[0]
         end_date = self.dates[1]
 
         df = df[start_date:end_date]
