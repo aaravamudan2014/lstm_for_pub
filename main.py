@@ -363,7 +363,7 @@ def train(cfg):
         ds, batch_size=cfg["batch_size"], shuffle=True, num_workers=cfg["num_workers"])
 
     # create model and optimizer
-    input_size_dyn = 5 if (cfg["no_static"] or not cfg["concat_static"]) else 32
+    input_size_dyn = 5 if (cfg["no_static"] or not cfg["concat_static"]) else 31
     model = Model(
         input_size_dyn=input_size_dyn,
         hidden_size=cfg["hidden_size"],
@@ -430,6 +430,8 @@ def train_epoch(model: nn.Module, optimizer: torch.optim.Optimizer, loss_func: n
 
         # forward pass through LSTM
         x, y, q_stds = data
+        # print(attributes[0])
+        # input()
         x, y, q_stds = x.to(DEVICE), y.to(DEVICE), q_stds.to(DEVICE)
         predictions = model(x)[0]
 
