@@ -43,7 +43,7 @@ GLOBAL_SETTINGS = {
     'clip_norm': True,
     'clip_value': 1,
     'dropout': 0.4,
-    'epochs': 20,
+    'epochs': 30,
     'hidden_size': 256,
     'initial_forget_gate_bias': 5,
     'log_interval': 50,
@@ -94,7 +94,7 @@ def get_args() -> Dict:
     parser.add_argument(
         '--gpu',
         type=int,
-        default=-1,
+        default=0,
         help="User-selected GPU ID - if none chosen, will default to cpu")
     parser.add_argument(
         '--cache_data', type=str2bool, default=True, help="If True, loads all data into memory")
@@ -146,14 +146,12 @@ def get_args() -> Dict:
         raise ValueError("In evaluation mode a run directory (--run_dir) has to be specified")
 
     # GPU selection
-    if cfg["gpu"] >= 0:
-        device = f"cuda:{cfg['gpu']}"
-    else:
-        device = 'cpu'
-
+    
+    device = f"cuda:{cfg['gpu']}"
+    
     global DEVICE
     DEVICE = torch.device(device if torch.cuda.is_available() else "cpu")
-
+    
     # combine global settings with user config
     cfg.update(GLOBAL_SETTINGS)
 
@@ -485,7 +483,7 @@ def evaluate(user_cfg: Dict):
     stds = ds_train.get_attribute_stds()
 
     # create model
-    input_size_dyn = 5 if (run_cfg["no_static"] or not run_cfg["concat_static"]) else 32
+    input_size_dyn = 5 if (run_cfg["no_static"] or not run_cfg["concat_static"]) else 31
     model = Model(
         input_size_dyn=input_size_dyn,
         hidden_size=run_cfg["hidden_size"],
@@ -494,7 +492,7 @@ def evaluate(user_cfg: Dict):
         no_static=run_cfg["no_static"]).to(DEVICE)
 
     # load trained model
-    weight_file = user_cfg["run_dir"] / 'model_epoch20.pt'
+    weight_file = user_cfg["run_dir"] / 'model_epoch30.pt'
     model.load_state_dict(torch.load(weight_file, map_location=DEVICE))
 
     results = {}
