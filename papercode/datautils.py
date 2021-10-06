@@ -24,7 +24,7 @@ INVALID_ATTR = [
     'low_prec_timing', 'huc', 'q_mean', 'runoff_ratio', 'stream_elas', 'slope_fdc',
     'baseflow_index', 'hfd_mean', 'q5', 'q95', 'high_q_freq', 'high_q_dur', 'low_q_freq',
     'low_q_dur', 'zero_q_freq', 'geol_porostiy', 'root_depth_50', 'root_depth_99', 'organic_frac',
-    'water_frac', 'other_frac'
+    'water_frac', 'other_frac', 'carbonate_rocks_frac'
 ]
 
 # ## Maurer mean/std calculated over all basins in period 01.10.1999 until 30.09.2008
@@ -149,9 +149,8 @@ def load_attributes(db_path: str,
         drop_names = [c for c in df.columns if c not in keep_features]
     else:
         drop_names = [c for c in df.columns if c in INVALID_ATTR]
-
     df = df.drop(drop_names, axis=1)
-
+ 
     return df
 
 
