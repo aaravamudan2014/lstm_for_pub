@@ -158,6 +158,11 @@ class CamelsTXT(Dataset):
 
     def _load_attributes(self) -> torch.Tensor:
         df = load_attributes(self.db_path, [self.basin], drop_lat_lon=True)
+        
+        # store means and stds
+        self.attribute_means = df.mean()
+        self.attribute_stds = df.std()
+
 
         # normalize data
         df = (df - self.attribute_means) / self.attribute_stds
@@ -290,7 +295,7 @@ class CamelsH5(Dataset):
 
     def _load_attributes(self):
         df = load_attributes(self.db_path, self.basins, drop_lat_lon=True)
-
+        
         # store means and stds
         self.attribute_means = df.mean()
         self.attribute_stds = df.std()
@@ -298,8 +303,15 @@ class CamelsH5(Dataset):
         # normalize data
         df = (df - self.attribute_means) / self.attribute_stds
 
+        # # for i in range(len(df)):
+        # #   print(df.iloc[i])
+        # #   input()
+        # print(self.attribute_means)
+        # print(self.attribute_stds)
+        # input()
         self.attribute_names = df.columns
         self.df = df
+        
 
     def get_attribute_means(self) -> pd.Series:
         """Return means of catchment attributes
